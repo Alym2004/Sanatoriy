@@ -1,3 +1,3 @@
 public enum Role {
-    MANAGER, PERSONAL, CLIENT
+    MANAGER, PERSONAL, CLIENT, DIRECTOR
 }

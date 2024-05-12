@@ -1,21 +1,11 @@
 import java.time.LocalDate;
 
-public class User {
+public class Client {
     private String name;
-    private String password;
-    private Role role;
     private String surname;
+    private String password;
     private LocalDate startDate;
     private LocalDate endDate;
-    private double servicePrice;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getName() {
         return name;
@@ -25,20 +15,20 @@ public class User {
         this.name = name;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public String getSurname() {
         return surname;
     }
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDate getStartDate() {
@@ -55,13 +45,5 @@ public class User {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public double getServicePrice() {
-        return servicePrice;
-    }
-
-    public void setServicePrice(double servicePrice) {
-        this.servicePrice = servicePrice;
     }
 }
