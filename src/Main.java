@@ -1,262 +1,430 @@
-import java.time.temporal.ChronoUnit;
-import java.util.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
 public class Main {
+    private static final DataBase dataBase = new DataBase();
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        User user = new User("Director", "0", Role.DIRECTOR);
+        User manager = new User("Manager", "0", Role.MANAGER);
+        User personal = new User("Personal", "0", Role.PERSONAL);
+        User client = new User("Client", "0", Role.CLIENT);
 
-        Date data = new Date();
-        LocalDate today = LocalDate.now();
-        LocalDate nowDate = LocalDate.now();
+        Procedure procedure = new Procedure("Procedure", LocalDateTime.now().plusDays(2), "First procedure", 1000);
+        Procedure procedure1 = new Procedure("Procedure1", LocalDateTime.now().plusDays(3), "Second procedure", 2000);
+        Procedure procedure2 = new Procedure("Procedure2", LocalDateTime.now().plusDays(4), "Third procedure", 3000);
 
-        DataBase dataBase = new DataBase();
-        List<User> userList = new ArrayList<>();
-//        List<Client> clientList = new ArrayList<>();
-        User manager = new User();
-        manager.setName("Alym");
-        manager.setPassword("0");
-        manager.setRole(Role.MANAGER);
+        dataBase.addProcedure(procedure);
+        dataBase.addProcedure(procedure1);
+        dataBase.addProcedure(procedure2);
 
-        User director = new User();
-        director.setName("Aidar");
-        director.setPassword("0");
-        director.setRole(Role.DIRECTOR);
+        dataBase.addClient(client);
+        dataBase.addUser(manager);
+        dataBase.addUser(personal);
+        dataBase.addUser(user);
 
-        User client1 = new User();
-        client1.setName("Beka");
-        client1.setPassword("0");
-        client1.setSurname("Bekaa");
-        client1.setServicePrice(200);
-        client1.setStartDate(LocalDate.now());
-        client1.setEndDate(LocalDate.now().plusDays(1));
-        client1.setRole(Role.CLIENT);
-
-//        User client2 = new User();
-//        client2.setName("Kurmanbek");
-//        client2.setPassword("0");
-//        client2.setRole(Role.CLIENT);
-//
-//        User client3 = new User();
-//        client3.setName("Baha");
-//        client3.setPassword("0");
-//        client3.setRole(Role.CLIENT);
-//
-//        User client4 = new User();
-//        client4.setName("Nurs");
-//        client4.setPassword("0");
-//        client4.setRole(Role.CLIENT);
-
-
-        User personal = new User();
-        personal.setName("Azim");
-        personal.setPassword("0");
-        personal.setRole(Role.PERSONAL);
-
-        userList.add(manager);
-        userList.add(director);
-        userList.add(client1);
-        userList.add(personal);
-        dataBase.setUserList(userList);
-
-        String request;
         while (true) {
-            System.out.print("Name: ");
-            String userName = scanner.nextLine();
-            System.out.print("Password: ");
-            String userPassword = scanner.nextLine();
-            User user = dataBase.findByName(userName);
-            if (user == null) {
-                System.out.println("User not found");
-            } else if (user.getPassword().equals(userPassword)) {
-                while (true) {
-                    if (user.getRole().equals(Role.MANAGER)) {
-                        System.out.println("Приветствую дорогой, Менеджер!\nПожалуйста наберите номер меню для работы с программой, если закончили, то наберите 8");
-                        System.out.println("1. Показать список посетителей\n2. Показать количество посетителей\n3. Поиск посетителя:\n4. Показать посетителя с максимальным количеством посещений\n5. Показать посетителя с минимальным количеством посещений\n6. Выход");
-                        int getInput = scanner.nextInt();
-                        if (getInput == 8){
-                            System.out.println("Программа завершена, мы будем рады вашему возвращению!");
-                            break;
-                        } else if (getInput == 1){
-                            do {
-                                System.out.println("\t\t\tpatients\n\t\t\t\t\t\t exit");
-                                List<User> clients = dataBase.getAllClients();
-                                int orderOfClient = 1;
-                                for (User user1 : clients) {
-                                    System.out.println(orderOfClient + ". Name: " + user1.getName() + "\tSurname: " + user1.getSurname() + "\n");
-                                    orderOfClient++;
-                                }
-                                request = scanner.nextLine();
-                            } while (!request.equalsIgnoreCase("exit"));
-                        } else if (getInput == 2) {
-                            do {
-                                System.out.println("\t\t\t\t\texit");
-                                List<User> clients = dataBase.getAllClients();
-                                System.out.println("Amount of patients: " + clients.size());
-                                request = scanner.nextLine();
-                            } while (!request.equalsIgnoreCase("exit"));
-                        } else if (getInput == 3) {
-                            do {
-                                System.out.print("\t\t\t\t\t\texit\n\nEnter client name: ");
-                                request = scanner.nextLine();
-                                List<User> clients = dataBase.getAllClients();
-                                int clientIndex = 0;
-                                for(User user1 : clients) {
-                                    if(user1.getName().equalsIgnoreCase(request)) {
-                                        System.out.println("\t\t\t\t\texit\n\nName: " + user1.getName()
-                                                + "\nSurname: " + user1.getSurname()
-                                                + "\nStart Date: " + user1.getStartDate()
-                                                + "\nEnd Date: " + user1.getEndDate()
-                                                + "\nService Price: " + user1.getServicePrice());
-                                        do {
-                                            request = scanner.nextLine();
-                                            if("END DATE".startsWith(request.toUpperCase())) {
-                                                System.out.println("End Date of procedure: " + user1.getEndDate());
-                                                System.out.println("Enter new end date: ");
-                                                System.out.print("Year: ");
-                                                int year = scanner.nextInt();
-                                                System.out.print("Month: ");
-                                                int month = scanner.nextInt();
-                                                System.out.print("Day: ");
-                                                int day = scanner.nextInt();
-                                                scanner.nextLine();
-                                                LocalDate newEndDate = LocalDate.of(year, month, day);
-                                                while (true) {
-                                                    System.out.println("New End Date of procedure: " + newEndDate);
-                                                    System.out.println("\tSubmit\t\t\t\t\tCancel");
-                                                    request = scanner.nextLine();
-                                                    if("CANCEL".startsWith(request.toUpperCase())) {
-                                                        break;
-                                                    } else if ("SUBMIT".startsWith(request.toUpperCase())) {
-                                                        user1.setEndDate(newEndDate);
-                                                        clients.set(clientIndex, user1);
-                                                        break;
-                                                    }
-                                                }
-                                            } else if ("START DATE".startsWith(request.toUpperCase())) {
-                                                System.out.println("Start Date of procedure: " + user1.getStartDate());
-                                                System.out.println("Enter new start date: ");
-                                                System.out.print("Year: ");
-                                                int year = scanner.nextInt();
-                                                System.out.print("Month: ");
-                                                int month = scanner.nextInt();
-                                                System.out.print("Day: ");
-                                                int day = scanner.nextInt();
-                                                scanner.nextLine();
-                                                LocalDate newStartDate = LocalDate.of(year, month, day);
-                                                while (true) {
-                                                    System.out.println("New Start Date of procedure: " + newStartDate);
-                                                    System.out.println("\tSubmit\t\t\t\t\tCancel");
-                                                    request = scanner.nextLine();
-                                                    if("CANCEL".startsWith(request.toUpperCase())) {
-                                                        break;
-                                                    } else if ("SUBMIT".startsWith(request.toUpperCase())) {
-                                                        user1.setStartDate(newStartDate);
-                                                        clients.set(clientIndex, user1);
-                                                        break;
-                                                    }
-                                                }
-                                            } else if ("SERVICE PRICE".startsWith(request.toUpperCase())) {
-                                                System.out.println("Service Price: " + user1.getServicePrice());
-                                                System.out.print("Enter new Service Price: ");
-                                                double newServicePrice = scanner.nextDouble();
-                                                scanner.nextLine();
-                                                while (true) {
-                                                    System.out.println("New Service Price: " + newServicePrice);
-                                                    System.out.println("\tSubmit\t\t\t\t\tCancel");
-                                                    request = scanner.nextLine();
-                                                    if("CANCEL".startsWith(request.toUpperCase())) {
-                                                        break;
-                                                    } else if ("SUBMIT".startsWith(request.toUpperCase())) {
-                                                        user1.setServicePrice(newServicePrice);
-                                                        clients.set(clientIndex, user1);
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        } while (!request.equalsIgnoreCase("exit"));
-                                    }
-                                    if("EXIT".startsWith(request.toUpperCase())) {
-                                        break;
-                                    }
-                                    clientIndex++;
-                                }
-                            } while (!request.equalsIgnoreCase("exit"));
-                        } else if (getInput == 4) {
-                            System.out.println("Изменить цену для процедур");
-                        } else if (getInput == 5) {
-                            System.out.println("Изменить время - название процедур");
-                        } else if (getInput == 6) {
-                            System.out.println(" Показать посетителя с максимальным количеством посещений");
-                        } else if (getInput == 7) {
-                            System.out.println("Показать посетителя с минимальным количеством посещений");
-                        } else {
-                            break;
-                        }
-                    } else if (user.getRole().equals(Role.CLIENT)) {
-                        System.out.println("\n" + "Приветствую дорогой, Посетитель!\n" + "Пожалуйста наберите номер меню для работы с программой, если закончили, то наберите 7:\n");
-                        System.out.println("1.Показать историю посещений процедур\n2.Показать последнюю дату посещения процедур\n3.Показать историю оплаты процедурам\n4.Показать расписание к процедурам\n5.Показать мою информацию\n6.Показать мой день проживания в Санатории\n7.Выход ");
-                        int getInput = scanner.nextInt();
-                        if (getInput == 7){
-                            System.out.println("Программа завершена, мы будем рады вашему возвращению!");
-                            break;
-                        } else if (getInput == 1) {
-
-                        } else if (getInput == 2) {
-
-                        } else if (getInput == 3) {
-
-                        } else if (getInput == 4) {
-
-                        } else if (getInput == 5) {
-
-                        } else if (getInput == 6) {
-
-                        }
-                    } else if (user.getRole().equals(Role.PERSONAL)) {
-                        System.out.println("\n" + "Приветствую уважаемая, Персонал!\n" + "Пожалуйста наберите номер меню для работы с программой, если закончили, то наберите 6:\n");
-                        System.out.println("1. Показать список процедур\n2. Найти посетителя\n3. Показать все процедуры\n4. Показать расписание к процедурам\n5. Купить процедуру\n6. Найти процедуры:\n7. Выход");
-                        int getInput = scanner.nextInt();
-                        if (getInput == 7) {
-                            System.out.println("Программа завершена, мы будем рады вашему возвращению!");
-                            break;
-                        } else if (getInput == 1) {
-                            System.out.println("amount of blabla");
-                        } else if (getInput == 2) {
-                            System.out.println("search");
-                        } else if (getInput == 3) {
-                            System.out.println("all prosedury");
-                        } else if (getInput == 4) {
-                            System.out.println("расписание к процедурам");
-                        } else if (getInput == 5) {
-                            System.out.println("buy proseduru");
-                        } else if (getInput == 6) {
-                            System.out.println("search proseduru");
-                        }
-                    } else if (user.getRole().equals(Role.DIRECTOR)){
-                        System.out.println("Welcome director");
-                    }
-                    else {
-                        System.out.println("Something went wrong. Server error!");
-                    }
-                }
-            } else {
-                System.out.println("Извините, но мы не нашли такой тип аккаунта или у вас неправильно введены логин и/или пароль пожалуйста повторите\n");
+            System.out.println("Введите тип аккаунта (1-Директор  2-Менеджер  3-Персонал  4-Клиент  5-Выход):");
+            int accountType = Integer.parseInt(scanner.nextLine());
+            switch (accountType) {
+                case 1:
+                    authenticate("Директор");
+                    break;
+                case 2:
+                    authenticate("Менеджер");
+                    break;
+                case 3:
+                    authenticate("Персонал");
+                    break;
+                case 4:
+                    authenticate("Клиент");
+                    break;
+                case 5:
+                    System.out.println("Программа завершена.");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Неверный ввод. Попробуйте снова.");
             }
         }
     }
-    public static void findeClientsByName(String userName,Scanner scanner,List<User> userList){
-        userName = scanner.nextLine();
-        if (userList.contains(userName)){
-            System.out.println(userName);
 
+    private static void authenticate(String role) {
+        System.out.print("Введите имя пользователя: ");
+        String name = scanner.nextLine();
+        System.out.print("Введите пароль: ");
+        String password = scanner.nextLine();
+        User currentUser = dataBase.authenticateUser(name, password);
+        if (currentUser != null) {
+            switch (role) {
+                case "Директор":
+                    if(!currentUser.getRole().equals(Role.DIRECTOR)) {
+                        System.out.println("Ваш роль не соответсвует!");
+                        break;
+                    }
+                    directorMenu();
+                    break;
+                case "Менеджер":
+                    if(!currentUser.getRole().equals(Role.MANAGER)) {
+                        System.out.println("Ваш роль не соответсвует!");
+                        break;
+                    }
+                    managerMenu();
+                    break;
+                case "Персонал":
+                    if(!currentUser.getRole().equals(Role.PERSONAL)) {
+                        System.out.println("Ваш роль не соответсвует!");
+                        break;
+                    }
+                    staffMenu();
+                    break;
+                case "Клиент":
+                    if(!currentUser.getRole().equals(Role.CLIENT)) {
+                        System.out.println("Ваш роль не соответсвует!");
+                        break;
+                    }
+                    clientMenu(currentUser);
+                    break;
+            }
+        } else {
+            System.out.println("Неправильные учетные данные.");
         }
     }
-    public static void clients(User client1,User client2,User client3, User client4,User client){
-        System.out.println(("1 " + client.getName() +
-                "\n2 "+ client1.getName()+
-                "\n3 " + client2.getName()+
-                "\n4 "+ client3.getName()+
-                "\n5 " + client4.getName()));
+
+    private static void directorMenu() {
+        boolean running = true;
+        while (running) {
+            System.out.println("Выберите действие:");
+            System.out.println("1. Добавить пользователя\n2. Удалить пользователя\n3. Просмотреть статистику\n4. Управление финансами\n5. Выход");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    addUser();
+                    break;
+                case 2:
+                    removeUser();
+                    break;
+                case 3:
+                    viewStatistics();
+                    break;
+                case 4:
+                    financialControl();
+                    break;
+                case 5:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    private static void addUser() {
+        System.out.print("Введите имя: ");
+        String name = scanner.nextLine();
+        System.out.print("Введите пароль: ");
+        String password = scanner.nextLine();
+        System.out.print("Введите роль (1 - Менеджер, 2 - Персонал, 3 - Клиент, 4 - Директор): ");
+        int roleId = Integer.parseInt(scanner.nextLine());
+        Role role = Role.values()[roleId - 1];
+        User newUser = new User(name, password, role);
+        dataBase.addUser(newUser);
+        System.out.println("Пользователь добавлен.");
+    }
+
+    private static void removeUser() {
+        System.out.print("Введите имя пользователя для удаления: ");
+        String userName = scanner.nextLine();
+        dataBase.removeUser(userName);
+        System.out.println("Пользователь удален.");
+    }
+
+    private static void viewStatistics() {
+        System.out.println("Статистика пользователей:");
+        dataBase.getUserStats().forEach((role, count) -> System.out.println(role + ": " + count));
+    }
+
+    private static void financialControl() {
+        boolean running = true;
+        while (running) {
+            System.out.println("1. Добавить финансовую запись");
+            System.out.println("2. Просмотреть все финансовые записи");
+            System.out.println("3. Выход");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Введите сумму: ");
+                    double amount = scanner.nextDouble();
+                    scanner.nextLine();
+                    System.out.print("Введите описание: ");
+                    String description = scanner.nextLine();
+                    System.out.print("Введите дату (гггг-мм-дд): ");
+                    String dateString = scanner.nextLine();
+                    LocalDate date = LocalDate.parse(dateString);
+                    dataBase.addFinancialRecord(new FinancialRecord(date, amount, description));
+                    System.out.println("Финансовая запись добавлена.");
+                    break;
+                case 2:
+                    System.out.println("Все финансовые записи:");
+                    for (FinancialRecord record : dataBase.getAllFinancialRecords()) {
+                        System.out.println(record.getDate() + ": " + record.getAmount() + " сом - " + record.getDescription());
+                    }
+                    break;
+                case 3:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    private static void managerMenu() {
+        boolean running = true;
+        while (running) {
+            System.out.println("Выберите действие:");
+            System.out.println("1. Добавить посетителя\n2. Удалить посетителя\n3. Показать список всех посетителей\n4. Показать отчет по активности посетителей\n5. Анализ эффективности персонала\n6. Управление финансами\n7. Отзывы \n8. Процедура\n9. Выход");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    addClient();
+                    break;
+                case 2:
+                    removeClient();
+                    break;
+                case 3:
+                    showAllClients();
+                    break;
+                case 4:
+                    showClientActivityReport();
+                    break;
+                case 5:
+                    Map<Role, Integer> staffEfficiency = dataBase.getStaffEfficiency();
+                    staffEfficiency.forEach((role, count) ->
+                            System.out.println("Роль: " + role + ", Обработано процедур: " + count));
+                    break;
+                case 6:
+                    financialControl();
+                    break;
+                case 7:
+                    System.out.println("Все отзывы:");
+                    for (Feedback feedback : dataBase.getAllFeedbacks()) {
+                        System.out.println(feedback.getCreated() + " " + feedback.getAuthor().getName() + ": " + feedback.getContent());
+                    }
+                    break;
+                case 8:
+                    procedureFunctions();
+                    break;
+                case 9:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    private static void addClient() {
+        System.out.print("Введите имя посетителя: ");
+        String name = scanner.nextLine();
+        System.out.print("Введите пароль: ");
+        String password = scanner.nextLine();
+        User newUser = new User(name, password, Role.CLIENT);
+        dataBase.addUser(newUser);
+        System.out.println("Посетитель добавлен.");
+    }
+
+    private static void removeClient() {
+        System.out.print("Введите имя посетителя для удаления: ");
+        String clientName = scanner.nextLine();
+        dataBase.removeUser(clientName);
+        System.out.println("Посетитель удален.");
+    }
+
+    private static void showAllClients() {
+        System.out.println("Список всех посетителей:");
+        dataBase.getAllClients().forEach(client -> System.out.println("Имя: " + client.getName()));
+    }
+
+    private static void showClientActivityReport() {
+        System.out.println("Отчет по активности посетителей:");
+        dataBase.getClientActivityReport().forEach((userName, visits) ->
+                System.out.println("Имя: " + userName + ", Посещения: " + visits));
+    }
+
+    private static void procedureFunctions() {
+        boolean running = true;
+        while (running) {
+            System.out.println("1. Просмотр статистики по процедурам");
+            System.out.println("2. Редактировать процедуру");
+            System.out.println("3. Выход");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    Map<String, Integer> procedureStats = dataBase.getProcedureUsageStats();
+                    procedureStats.forEach((procName, usage) -> System.out.println("Процедура: " + procName + ", Количество посетителей: " + usage));
+                    break;
+                case 2:
+                    System.out.print("Введите название процедуры для редактирования: ");
+                    String editName = scanner.nextLine();
+                    Procedure proc = dataBase.findProcedureByName(editName);
+                    if (proc != null) {
+                        System.out.print("Введите новое описание для процедуры: ");
+                        String newDescription = scanner.nextLine();
+                        proc.setDescription(newDescription);
+                        System.out.println("Информация обновлена.");
+                    } else {
+                        System.out.println("Процедура не найдена.");
+                    }
+                    break;
+                case 3:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+
+
+    private static void staffMenu() {
+        boolean running = true;
+        while (running) {
+            System.out.println("Выберите действие:");
+            System.out.println("1. Просмотреть список процедур\n2. Добавить процедуру\n3. Удалить процедуру\n4. Найти посетителя\n5. Выход");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    listProcedures();
+                    break;
+                case 2:
+                    addProcedure();
+                    break;
+                case 3:
+                    removeProcedure();
+                    break;
+                case 4:
+                    findClient();
+                    break;
+                case 5:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    private static void listProcedures() {
+        System.out.println("Список всех процедур:");
+        dataBase.getAllProcedures().forEach(proc -> System.out.println(proc.getName() + ": " + proc.getDescription() + " at " + proc.getTime()));
+    }
+
+    private static void addProcedure() {
+        System.out.print("Введите название процедуры: ");
+        String name = scanner.nextLine();
+        System.out.print("Введите описание процедуры: ");
+        String description = scanner.nextLine();
+        System.out.print("Введите дату и время процедуры (гггг-мм-ддТчч:мм): ");
+        LocalDateTime time = LocalDateTime.parse(scanner.nextLine());
+        System.out.print("Введите сумму цанаториюЖ ");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        Procedure newProcedure = new Procedure(name, time, description, price);
+        dataBase.addProcedure(newProcedure);
+        System.out.println("Процедура добавлена.");
+    }
+
+    private static void removeProcedure() {
+        System.out.print("Введите название процедуры для удаления: ");
+        String procedureName = scanner.nextLine();
+        if (dataBase.removeProcedure(procedureName)) {
+            System.out.println("Процедура удалена.");
+        } else {
+            System.out.println("Процедура не найдена.");
+        }
+    }
+
+    private static void findClient() {
+        System.out.print("Введите имя посетителя для поиска: ");
+        String clientName = scanner.nextLine();
+        User client = dataBase.findClientByName(clientName);
+        if (client != null) {
+            System.out.println("Найден посетитель: " + client.getName());
+        } else {
+            System.out.println("Посетитель не найден.");
+        }
+    }
+
+
+
+    private static void clientMenu(User currentUser) {
+        boolean running = true;
+        while (running) {
+            System.out.println("1. Просмотр расписания процедур\n2. Просмотр истории процедур\n3. Просмотр информации о здоровье\n4. Купить процедуру\n5. Отзыв\n6. Выход");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1:
+                    viewSchedule(currentUser);
+                    break;
+                case 2:
+                    viewHistory(currentUser);
+                    break;
+                case 3:
+                    viewHealthInfo(currentUser);
+                    break;
+                case 4:
+                    buyProcedure(currentUser);
+                    break;
+                case 5:
+                    System.out.print("Введите ваш отзыв: ");
+                    String content = scanner.nextLine();
+                    dataBase.addFeedback(new Feedback(currentUser, content));
+                    System.out.println("Ваш отзыв успешно добавлен!");
+                    break;
+                case 6:
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    private static void buyProcedure(User currentUser) {
+        System.out.println("Все доступные процедуры: ");
+        dataBase.getActiveProcedures().forEach(procedure -> System.out.println("Имя: " + procedure.getName() + "\tВремя: " + procedure.getTime() + "\tЦена: " + procedure.getPrice()));
+        System.out.print("Введите название процедур: ");
+        String procName = scanner.nextLine();
+        Procedure procedure = dataBase.findProcedureByName(procName);
+        if(procedure != null) {
+            List<User> users = new ArrayList<>();
+            List<Procedure> attachProcedure = new ArrayList<>();
+            attachProcedure.add(procedure);
+            currentUser.setScheduledProcedures(attachProcedure);
+            users.add(currentUser);
+            procedure.setAttendees(users);
+            System.out.println("Процедура успешно куплено");
+        } else {
+            System.out.println("Процедура не найдена");
+        }
+    }
+
+    private static void viewSchedule(User currentUser) {
+        System.out.println("Расписание процедур:");
+        currentUser.getScheduledProcedures().forEach(proc -> System.out.println(proc.getName() + " в " + proc.getTime() + " - " + proc.getDescription()));
+    }
+
+    private static void viewHistory(User currentUser) {
+        System.out.println("История процедур:");
+        currentUser.getPaymentHistory().forEach(System.out::println);
+    }
+
+    private static void viewHealthInfo(User currentUser) {
+        System.out.println("Информация о здоровье: " + currentUser.getHealthInfo());
     }
 }
-//+ " "+ ChronoUnit.DAYS.between(clientNumu,nowDate) + " Days in Sanatoriy " + ChronoUnit.DAYS.between(nowDate, daysLeftNumu) + " Days left"
